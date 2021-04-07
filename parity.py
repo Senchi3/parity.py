@@ -11,10 +11,16 @@ title = None
 summary = None
 instructions = None
 options = None
+error = None
+proposal_prompt = None
+yay = None
+aww = None
+retry_prompt = None
 
 language = None
 abc = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-error = "Unknown error.\n"
+answer = ""
+result = False
 
 class ErrorHandler:
     def __init__(self, state, message, waiting_time):
@@ -29,8 +35,7 @@ class ErrorHandler:
         else:
             cls()
             print("wtf did u do bru")
-            time.sleep(5)
-            quit()
+            time.sleep(100)
 
 class LanguageSelect:
     def __init__(self):
@@ -40,6 +45,10 @@ class LanguageSelect:
         global instructions
         global options
         global error
+        global proposal_prompt
+        global yay
+        global aww
+        global retry_prompt
         language = input("Select your language and press Enter:\nEnglish = 1, Spanish = 2\n")
         if language == "1":
             title = "Welcome to Parity.py!\n"
@@ -47,6 +56,10 @@ class LanguageSelect:
             instructions = "The upmost row and the rightmost column give a clue to the error in the grid. When you think you've found it, input the error's coordinates (i.e. 4C) and press Enter to check!\n"
             options = "1. Easy   2. Normal   3. Hard   4. Exit\n"
             error = "The option you've inputted is not valid.\n"
+            proposal_prompt = "\n\nResult: "
+            yay = "Congratulations! You have succesfully cleared the game :)"
+            aww = "Oh no! You failed to clear the game :("
+            retry_prompt = "Try again? (Y/N): "
             menu = MainMenu()
         elif language == "2":
             title = "Bienvenido a Parity.py!\n"
@@ -54,6 +67,10 @@ class LanguageSelect:
             instructions = "La fila superior y la columna izquierda muestran pistas para encontrar el error en la cuadrícula. Cuando lo encuentres, ingresa las coordenadas del error (ej. 4C) y presiona Enter para verificar!\n"
             options = "1. Fácil   2. Normal   3. Dificil   4. Salir\n"
             error = "La opción que has ingresado no es válida.\n"
+            proposal_prompt = "\n\nResultado: "
+            yay = "Hurra! Ganaste el juego :)"
+            aww = "Oh no! Perdiste el juego :("
+            retry_prompt = "¿Quieres volver a intentar? (Y/N): "
             menu = MainMenu()
         else:
             language = ("Error")
@@ -80,9 +97,8 @@ class ParityGame:
     def __init__(self, field_width, field_height):
         self.field_width = field_width
         self.field_height = field_height
-        mine_location = [randint(1, field_width), randint(1, field_height)]
-        # In game_state, false is uncleared, true is cleared
-        game_state = False
+        answer = (abc[randint(1, field_height)]) + str(randint(1, field_width))
+        proposal = ""
 
         def display_grid():
             # Create grid
@@ -164,15 +180,37 @@ class ParityGame:
                 count += 1
         
         def check_result():
-            return True
+            print(answer)
+            proposal = input(proposal_prompt)
+            print(answer)
+            print(proposal)
+            time.sleep(10)
+            if proposal == answer:
+                return True
+            else:
+                return False
         
         cls()
         display_grid()
-        time.sleep(100)
+        if(check_result() == True):
+            result = True
+            result_screen = ResultMenu()
+        else:
+            result = False
+            result_screen = ResultMenu()
 
 class ResultMenu:
-    # TODO: Make work
-    e = e
+    def __init__(self):
+        if result == True:
+            print(yay)
+        else:
+            print(aww)
+        retry = input(retry_prompt)
+        if retry == "Y" or "y":
+            menu = MainMenu()
+        else:
+            menu = MainMenu()
+
 
 language_select = LanguageSelect()
 
