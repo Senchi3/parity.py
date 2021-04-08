@@ -19,13 +19,12 @@ retry_prompt = None
 
 language = None
 abc = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-answer = ""
 result = False
 
 class ErrorHandler:
     def __init__(self, state, message, waiting_time):
         cls()
-        print(message)
+        print(colored(message, 'white', 'on_red'))
         time.sleep(waiting_time)
         cls()
         if state == "language_select":
@@ -34,7 +33,7 @@ class ErrorHandler:
             menu = MainMenu()
         else:
             cls()
-            print("wtf did u do bru")
+            print(colored("wtf did u do bru", 'white', 'on_red'))
             time.sleep(100)
 
 class LanguageSelect:
@@ -51,7 +50,7 @@ class LanguageSelect:
         global retry_prompt
         language = input("Select your language and press Enter:\nEnglish = 1, Spanish = 2\n")
         if language == "1":
-            title = "Welcome to Parity.py!\n"
+            title = colored("Welcome to Parity.py!\n", attrs=['bold'])
             summary = "This is a command line game based on a common error control algorithm.\n"
             instructions = "The upmost row and the rightmost column give a clue to the error in the grid. When you think you've found it, input the error's coordinates (i.e. 4C) and press Enter to check!\n"
             options = "1. Easy   2. Normal   3. Hard   4. Exit\n"
@@ -62,7 +61,7 @@ class LanguageSelect:
             retry_prompt = "Try again? (Y/N): "
             menu = MainMenu()
         elif language == "2":
-            title = "Bienvenido a Parity.py!\n"
+            title = colored("Bienvenido a Parity.py!\n", attrs=['bold'])
             summary = "Este es un juego de línea de comandos basado en un algoritmo de control de errores común.\n"
             instructions = "La fila superior y la columna izquierda muestran pistas para encontrar el error en la cuadrícula. Cuando lo encuentres, ingresa las coordenadas del error (ej. 4C) y presiona Enter para verificar!\n"
             options = "1. Fácil   2. Normal   3. Dificil   4. Salir\n"
@@ -97,18 +96,33 @@ class ParityGame:
     def __init__(self, field_width, field_height):
         self.field_width = field_width
         self.field_height = field_height
-        answer = (abc[randint(0, field_height - 1)]) + str(randint(0, field_width - 1) + 1)
+        answer = [(randint(0, field_height - 1)), (randint(0, field_width - 1))]
+        formatted_answer = (abc[(answer[0])] + str(answer[1] + 1))
         proposal = ""
 
         def display_grid():
             # Create grid
             grid = []
-            for i in range(0, field_height):
+            row_count = 0
+            column_count = 0
+            for r in range(1, field_height):
                 row = []
-                for i in range(0, field_width):
+                while column_count <= field_width:
                     row.append(randint(0,1))
+                    if row[column_count] == answer[1] and row_count == answer[0]:
+                        if row[column_count] == 1:
+                            row[column_count] == 0
+                        elif row[column_count] == 0:
+                            row[column_count] == 1
+                    column_count += 1
                 grid.append(row)
+                row_count += 1
+                column_count = 0
+            row_count = 0
             
+            row_count = 0
+            column_count = 0
+
             # Create error checking values
             hint_row = [0] * field_width
             hint_column = [0] * field_height
@@ -149,20 +163,20 @@ class ParityGame:
                 error = ErrorHandler("parity_game", "Mismatching parity values.\n", 3)
 
             # Display coordinate row
-            print("    ", end = "")
+            print("      ", end = "")
             i = 0
             while i <= field_width:
                 if i != 0:
-                    print(i, end = " ")
+                    print(colored((" " + str(i) + " "), 'white', 'on_grey', attrs=['bold']), end = "")
                 i += 1
             print("")
             
             # Display parity bit and error checking row
-            print("  ", end = "")
-            print(str(parity_bit), end = " ")
+            print(colored("   ", 'white', 'on_grey', attrs=['bold']), end = "")
+            print(colored((" " + str(parity_bit) + " "), 'white', 'on_magenta'), end = "")
             i = 0
             for i in hint_row:
-                print(i, end = " ")
+                print(colored((" " + str(i) + " "), 'white', 'on_blue'), end = "")
             print("")
 
             # Display grid
@@ -170,22 +184,22 @@ class ParityGame:
             for r in grid:
 
                 # Display coordinate and error checking columns
-                print(str(abc[count]), end = " ")
-                print(hint_column[count], end = " ")
+                print(colored((" " + str(abc[count]) + " "), 'white', 'on_grey', attrs=['bold']), end = "")
+                print(colored((" " + str(hint_column[count]) + " "), 'white', 'on_red'), end = "")
 
                 #Display grid columns
                 for n in r:
-                    print(str(n), end = " ")
+                    if n == 0:
+                        print(colored((" " + str(n) + " "), 'grey', 'on_white'), end = "")
+                    elif n == 1:
+                        print(colored((" " + str(n) + " "), 'grey', 'on_green'), end = "")
                 print()
                 count += 1
         
         def check_result():
-            print("Correct answer: " + answer)
             proposal = input(proposal_prompt)
-            print("Correct answer: " + answer)
-            print("Your response: " + proposal)
             time.sleep(1)
-            if proposal == answer:
+            if proposal == formatted_answer:
                 return True
             else:
                 return False
