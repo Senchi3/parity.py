@@ -97,7 +97,7 @@ class ParityGame:
     def __init__(self, field_width, field_height):
         self.field_width = field_width
         self.field_height = field_height
-        answer = (abc[randint(1, field_height)]) + str(randint(1, field_width))
+        answer = (abc[randint(0, field_height - 1)]) + str(randint(0, field_width - 1) + 1)
         proposal = ""
 
         def display_grid():
@@ -180,11 +180,11 @@ class ParityGame:
                 count += 1
         
         def check_result():
-            print(answer)
+            print("Correct answer: " + answer)
             proposal = input(proposal_prompt)
-            print(answer)
-            print(proposal)
-            time.sleep(10)
+            print("Correct answer: " + answer)
+            print("Your response: " + proposal)
+            time.sleep(1)
             if proposal == answer:
                 return True
             else:
@@ -194,13 +194,13 @@ class ParityGame:
         display_grid()
         if(check_result() == True):
             result = True
-            result_screen = ResultMenu()
         else:
             result = False
-            result_screen = ResultMenu()
+        result_screen = ResultMenu(result)
 
 class ResultMenu:
-    def __init__(self):
+    def __init__(self, result):
+        self.result = result
         if result == True:
             print(yay)
         else:
